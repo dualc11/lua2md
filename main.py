@@ -1,6 +1,9 @@
 from mdutils.mdutils import MdUtils
-import luadata, sys, json
+import luadata, sys, json, re 
 from enum import Enum 
+
+REMOVE_SPECIAL_CHARACTER_REG_EX = '[^A-Za-z0-9]+'
+
 class Tag():
     def __init__(self, tagDict):
         self.enumTag = Enum('tag', tagDict)
@@ -66,8 +69,9 @@ if __name__ == '__main__':
     book = Book(rawBook = rawBook, tag = tag)
     book.createBookChapter()
     
-    fileName = rawBook["stats"]["title"]
-    mdFile_ = initMdFile(file_name = fileName, title = "Bookmarks form " + fileName)
+    fileName = re.sub(REMOVE_SPECIAL_CHARACTER_REG_EX, "", str(rawBook["stats"]["title"]))
+
+    mdFile_ = initMdFile(file_name = fileName, title = "Bookmarks form " + rawBook["stats"]["title"])
 
     for chapter, chapterhighlights in book.bookChapter.items():
         print("Processing chapter: " + chapter)
